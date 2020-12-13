@@ -1,0 +1,16 @@
+{
+  "manifest_version": 2,
+  "name": "a JS To Chrome Test",
+  "version": "0.1",
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": ["lib/js/jQuery-2.4.2.js", "js/main.js"]
+    }
+  ],
+  "browser_action": {
+    "default_icon": "icons/16.png"
+  }
+}
