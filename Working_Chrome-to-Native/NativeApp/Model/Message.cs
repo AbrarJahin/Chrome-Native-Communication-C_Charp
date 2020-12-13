@@ -4,8 +4,6 @@ namespace ExampleApp.Model
 {
     class Message
     {
-        [JsonProperty("text")]
-        public string Text { get; set; }
         [JsonProperty("signXmlText")]
         public string XmlText { get; set; }
         [JsonProperty("signReason")]

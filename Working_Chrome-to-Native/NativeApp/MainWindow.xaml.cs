@@ -43,14 +43,13 @@ namespace ExampleApp
         private async Task<Message> ComputeResponseAsync(Message receivedMessage)
         {
             await Task.Delay(10);
-            receivedMessage.Text = ReverseString(receivedMessage.Text);
+            receivedMessage.XmlText = ReverseString(receivedMessage.XmlText);
             return receivedMessage;
         }
 
         private async Task CleanUpAsync()
         {
-            this.Hide();
-            await Task.Delay(10);
+            await Task.Delay(1);
             Application.Current.Shutdown();
         }
 

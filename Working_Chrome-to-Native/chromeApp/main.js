@@ -63,8 +63,7 @@ function disconnectNativeMessage() {
 
 function sendNativeMessage() {
   message = {
-    "text": document.getElementById('input-text').value,
-    "signXmlText": "sign Xml Text",
+    "signXmlText": document.getElementById('input-text').value,
     "signReason": "sign Reason",
     "signId": "sign Id"
   };
