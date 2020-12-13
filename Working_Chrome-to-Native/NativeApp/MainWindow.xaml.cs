@@ -17,6 +17,7 @@ namespace ExampleApp
         public MainWindow()
         {
             InitializeComponent();
+            //this.Hide();
             Loaded += WindowLoaded;
         }
 
