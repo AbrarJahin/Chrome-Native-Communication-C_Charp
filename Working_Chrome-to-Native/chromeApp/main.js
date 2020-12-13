@@ -62,7 +62,12 @@ function disconnectNativeMessage() {
 }
 
 function sendNativeMessage() {
-  message = {"text": document.getElementById('input-text').value};
+  message = {
+    "text": document.getElementById('input-text').value,
+    "signXmlText": "sign Xml Text",
+    "signReason": "sign Reason",
+    "signId": "sign Id"
+  };
   port.postMessage(message);
   appendMessage("Sent message: <b>" + JSON.stringify(message) + "</b>");
 }
@@ -77,18 +82,3 @@ document.addEventListener('DOMContentLoaded', function () {
 
   updateUiState();
 });
-
-/*
-chrome.runtime.onMessageExternal.addListener(
-  function(request, sender, sendResponse) {
-    if (sender.url == blocklistedWebsite)
-      return;  // don't allow this web page access
-    if (request.openUrlInEditor)
-      openUrl(request.openUrlInEditor);
-  });
-*/
-
-function hi(msg = "Man!"){
-  console.log("Hi, " + msg);
-  return msg + " - " +Date.now();
-}
