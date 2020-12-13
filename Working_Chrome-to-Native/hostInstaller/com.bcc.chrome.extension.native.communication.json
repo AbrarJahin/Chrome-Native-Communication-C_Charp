@@ -1,5 +1,5 @@
 {
-  "name": "com.google.chrome.example.echo",
+  "name": "com.bcc.chrome.extension.native.communication",
   "description": "Chrome Native Messaging API Example Host",
   "path": "F:\\asd\\Chrome-Native-Communication-C_Charp\\Working_Chrome-to-Native\\NativeApp\\bin\\Release\\netcoreapp3.1\\publish\\ExampleApp.exe",
   "type": "stdio",

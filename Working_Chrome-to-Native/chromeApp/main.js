@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+var hostName = "com.bcc.chrome.extension.native.communication";
 var port = null;
 
 var getKeys = function(obj){
@@ -42,7 +43,6 @@ function onDisconnected() {
 }
 
 function connect() {
-  var hostName = "com.google.chrome.example.echo";
   appendMessage("Connecting to native messaging host <b>" + hostName + "</b>")
   port = chrome.runtime.connectNative(hostName);
   //console.log(port);
