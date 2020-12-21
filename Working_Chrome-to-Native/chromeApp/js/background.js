@@ -57,15 +57,12 @@ function onDisconnected() {
 }
 
 function connectNativeMessage() {
-	if(port == null){
-		port = chrome.runtime.connectNative(hostName);
-		port.onMessage.addListener(onNativeMessage);
-		port.onDisconnect.addListener(onDisconnected);
+	if(port != null){
+		console.log("Not First Connection");
 	}
-	else
-	{
-		console.log("Already Connected");
-	}
+	port = chrome.runtime.connectNative(hostName);
+	port.onMessage.addListener(onNativeMessage);
+	port.onDisconnect.addListener(onDisconnected);
 }
 
 function disconnectNativeMessage() {
@@ -80,4 +77,5 @@ function disconnectNativeMessage() {
 function sendNativeMessage(message) {
 	connectNativeMessage();
 	port.postMessage(message);
+	port.disconnect();
 }
