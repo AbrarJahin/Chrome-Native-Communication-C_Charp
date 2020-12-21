@@ -48,7 +48,7 @@ function appendMessage(text) {
 
 function onNativeMessage(message){
 	appendMessage("Received message: <b>" + JSON.stringify(message) + "</b>");
-	port = null;	//Disconnect by self - try
+	//port = null;	//Disconnect by self - try
 }
 
 function onDisconnected() {
@@ -57,9 +57,15 @@ function onDisconnected() {
 }
 
 function connectNativeMessage() {
-	port = chrome.runtime.connectNative(hostName);
-	port.onMessage.addListener(onNativeMessage);
-	port.onDisconnect.addListener(onDisconnected);
+	if(port == null){
+		port = chrome.runtime.connectNative(hostName);
+		port.onMessage.addListener(onNativeMessage);
+		port.onDisconnect.addListener(onDisconnected);
+	}
+	else
+	{
+		console.log("Already Connected");
+	}
 }
 
 function disconnectNativeMessage() {
