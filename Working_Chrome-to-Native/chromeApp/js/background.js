@@ -48,7 +48,7 @@ function appendMessage(text) {
 
 function onNativeMessage(message){
 	appendMessage("Received message: <b>" + JSON.stringify(message) + "</b>");
-	//port = null;	//Disconnect by self - try
+	port.disconnect();
 }
 
 function onDisconnected() {
@@ -77,5 +77,4 @@ function disconnectNativeMessage() {
 function sendNativeMessage(message) {
 	connectNativeMessage();
 	port.postMessage(message);
-	port.disconnect();
 }
