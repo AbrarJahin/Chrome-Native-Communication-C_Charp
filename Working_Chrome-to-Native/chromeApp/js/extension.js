@@ -47,7 +47,8 @@ function performSign(signText, signReason = "Not Provided", signId = "Not Provid
 		signId: signId
 	},
 	function (response) {
-		console.log(response);	
+		console.log("Received message: <b>" + JSON.stringify(response) + "</b>");	
+		
 	});
 	return true;
 }

@@ -14,18 +14,12 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 				"signXmlText": "OK",
 				"signReason": "sign Reason",
 				"signId": "sign Id"
-			});
+			}, sendResponse);
 
 			var status = ["signed", "rejected"];
 			var signedText = "OK";
 
-			sendResponse({
-				message: message,
-				sender: sender,
-				time : (new Date()).toUTCString() + "-" + (new Date()).getMilliseconds(),
-				status: status,
-				signedText: signedText
-			});
+			
 			break;
 		case "OtherString":
 			// Functionality
@@ -56,15 +50,29 @@ function onDisconnected() {
 	port = null;
 }
 
-function connectNativeMessage() {
+function myResponse(){
+	sendResponse({
+		message: message,
+		sender: sender,
+		time : (new Date()).toUTCString() + "-" + (new Date()).getMilliseconds(),
+		status: status,
+		signedText: signedText
+	});
+}
+
+function connectNativeMessage(callback) {
 	if(port == null){
 		port = chrome.runtime.connectNative(hostName);
-		port.onMessage.addListener(onNativeMessage);
-		port.onDisconnect.addListener(onDisconnected);
+		port.onMessage.addListener(callback);
+		//port.onDisconnect.addListener(onDisconnected);
 	}
 	else
 	{
 		console.log("Already Connected");
+		port = chrome.runtime.connectNative(hostName);
+		port.onMessage.addListener(callback);
+		console.log('hi');
+		//port.onDisconnect.addListener(onDisconnected);
 	}
 }
 
@@ -77,7 +85,7 @@ function disconnectNativeMessage() {
 	}
 }
 
-function sendNativeMessage(message) {
-	connectNativeMessage();
+function sendNativeMessage(message, callback) {
+	connectNativeMessage(callback);
 	port.postMessage(message);
 }
