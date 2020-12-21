@@ -32,7 +32,11 @@
       "matches": [
         "<all_urls>"
       ],
-      "js": ["lib/js/jQuery-2.4.2.js", "js/extension.js"]
+      "js": ["./lib/js/jQuery-2.4.2.js", "./js/extension.js"]
     }
-  ]
+  ],
+  "background": {
+    "scripts": ["./lib/js/jQuery-2.4.2.js", "./js/background.js"],
+    "persistent": true
+  }
 }

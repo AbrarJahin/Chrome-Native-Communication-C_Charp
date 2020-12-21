@@ -4,7 +4,8 @@
   "path": "F:\\asd\\Chrome-Native-Communication-C_Charp\\Working_Chrome-to-Native\\NativeApp\\bin\\Release\\netcoreapp3.1\\publish\\ExampleApp.exe",
   "type": "stdio",
   "allowed_origins": [
-    "chrome-extension://knldjmfmopnpolahpmmgbagdohdnhkik/"
+    "chrome-extension://knldjmfmopnpolahpmmgbagdohdnhkik/",
+    "chrome-extension://IDknldjmfmopnpolahpmmgbagdohdnhkik/"
   ],
   "background": { 
     "persistent": false

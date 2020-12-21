@@ -40,22 +40,22 @@ namespace ExampleApp
             }, CleanUpAsync);
         }
 
-        private async Task<Message> ComputeResponseAsync(Message receivedMessage)
-        {
-            await Task.Delay(10);
-            receivedMessage.XmlText = ReverseString(receivedMessage.XmlText);
-            return receivedMessage;
-        }
-
         private async Task CleanUpAsync()
         {
             await Task.Delay(1);
             Application.Current.Shutdown();
         }
 
-        private string ReverseString(string request)
+        //private string ReverseString(string request)
+        //{
+        //    return new string(request.ToCharArray().Reverse().ToArray());
+        //}
+
+        private async Task<Message> ComputeResponseAsync(Message receivedMessage)
         {
-            return new string(request.ToCharArray().Reverse().ToArray());
+            await Task.Delay(10);
+            receivedMessage.XmlText = new string(receivedMessage.XmlText.ToCharArray().Reverse().ToArray());
+            return receivedMessage;
         }
     }
 }
