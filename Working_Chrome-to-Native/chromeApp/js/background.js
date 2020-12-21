@@ -1,24 +1,35 @@
-var hostName = "com.bcc.chrome.extension.native.communication";
-var port = null;
+//https://stackoverflow.com/questions/31201420/chrome-extension-native-messaging-synchronization
+
+//Locking implementation
+var isLocked = false;
+var lastNativeMessage = null;
 
 //Startup Event
 chrome.runtime.onInstalled.addListener(function() {
-	console.log("OK");
+	console.log("BCC-CA Extention Loaded.");
 });
 
 // Bind event on receiving any message:
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+	if(isLocked)
+	{
+		return;
+	}
 	switch(message.eventType) {
 		case "signature":
+			isLocked = true;
 			sendNativeMessage({
 				"signXmlText": "OK",
 				"signReason": "sign Reason",
 				"signId": "sign Id"
 			});
-
 			var status = ["signed", "rejected"];
+			// while(isLocked)
+			// {
+			// 	status = "nativeMessageSent";
+			// }
+			console.log(lastNativeMessage);
 			var signedText = "OK";
-
 			sendResponse({
 				message: message,
 				sender: sender,
@@ -40,19 +51,21 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 	}
 });
 
-//////////////////////////////////////////////////////////////////////////////
-
-function appendMessage(text) {
-	console.log(text);
-}
+/////////////////////////////Native Message Function Defination - Start
+var hostName = "com.bcc.chrome.extension.native.communication";
+var port = null;
 
 function onNativeMessage(message){
-	appendMessage("Received message: <b>" + JSON.stringify(message) + "</b>");
+	//appendMessage("Received message: " + JSON.stringify(message));
+	console.log(message);
+	lastNativeMessage = message;
 	port.disconnect();
+	isLocked = false;
 }
 
 function onDisconnected() {
-	appendMessage("Failed to connect: " + chrome.runtime.lastError.message);
+	console.warn("Faild to connect or disconnected");
+	console.error(chrome.runtime.lastError.message);
 	port = null;
 }
 
@@ -65,16 +78,8 @@ function connectNativeMessage() {
 	port.onDisconnect.addListener(onDisconnected);
 }
 
-function disconnectNativeMessage() {
-	try {
-		chrome.runtime.reload();
-	} catch (error) {
-		console.log("kios mode enabled");
-		chrome.runtime.restart();
-	}
-}
-
 function sendNativeMessage(message) {
 	connectNativeMessage();
 	port.postMessage(message);
 }
+/////////////////////////////Native Message Function Defination - End

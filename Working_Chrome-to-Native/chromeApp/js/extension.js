@@ -40,15 +40,20 @@ function performSign(signText, signReason = "Not Provided", signId = "Not Provid
 		return false;
 	}
 	//Perform sign with Chrome Native Messaging - send data to background script
-	chrome.runtime.sendMessage({
-		eventType: 'signature',
-		signText: signText,
-		signReason: signReason,
-		signId: signId
-	},
-	function (response) {
-		console.log(response);	
-	});
+	try {
+		chrome.runtime.sendMessage({
+			eventType: 'signature',
+			signText: signText,
+			signReason: signReason,
+			signId: signId
+		},
+		function (response) {
+			console.log(response);	
+		});
+	} catch (error) {
+		console.log(error);
+		reloadExtension();
+	}
 	return true;
 }
 
@@ -82,5 +87,14 @@ function fixChromeBackCompatblity()
 			chrome.runtime.onConnect = chrome.extension.onConnect;
 			chrome.runtime.connect = chrome.extension.connect;
 		}
+	}
+}
+
+function reloadExtension() {
+	try {
+		chrome.runtime.reload();
+	} catch (error) {
+		console.log("kios mode enabled");
+		chrome.runtime.restart();
 	}
 }
