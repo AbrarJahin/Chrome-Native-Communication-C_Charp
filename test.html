@@ -2,26 +2,36 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script type="text/javascript">
-        //mybtn
-    </script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<script type="text/javascript">
+		function callMe(param=null) {
+			if(param==null)
+			{
+				alert("No param added");
+				console.log("No param added");
+			} else{
+				alert(param);
+				console.log(param);
+			}
+		}
+	</script>
 </head>
 
 <body>
-    <a class="btn-digital-sign" id="button" href="#?google.com"
-        sign-xml="test"
-        sign-reason="Anything"
-        sign-server-id="123">
-        click to sign
-    </a>
+	https://stackoverflow.com/a/41425087/2193439
+	<a class="btn-digital-sign" id="button" href="#?google.com"
+		sign-xml="test"
+		sign-reason="Anything"
+		sign-server-id="123">
+		click to sign
+	</a>
 
-    <br/><br/><br/><br/>
-    <a class="btn-connect" id="checkButton" href="#?google.com">
-        click to connect
-    </a>
+	<br/><br/><br/><br/>
+	<a class="btn-connect" id="checkButton" href="#?google.com">
+		click to connect
+	</a>
 </body>
 
 </html>

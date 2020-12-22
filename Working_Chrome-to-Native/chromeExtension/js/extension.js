@@ -1,6 +1,7 @@
 // var hostName = "com.bcc.chrome.extension.native.communication";
 var isNotChromeBrowser = true;
 let guidToSignedDataMap = new Map();
+let guidToThisMap = new Map();
 
 $(document).ready(function () {
 	if(jQuery.inArray(getUserBrowser(), ["chrome", "MS Edge Chromium"]) == -1){
@@ -14,14 +15,11 @@ $(document).ready(function () {
 		alert("Clicked Connect Button");
 	});
 
-	//var firstHref = $("a").eq(0).attr("href");
-	//console.log(firstHref);
-
 	$(".btn-digital-sign").on("click",function(){
 		var signText = $(this).attr('sign-xml');
 		var signReason = $(this).attr('sign-reason');
 		var signId = $(this).attr('sign-server-id');
-		if(!performSign(signText, signReason, signId))
+		if(!performSign(signText, signReason, signId, $(this)))
 		{
 			alert("Sign perform failed");
 		}
@@ -32,7 +30,7 @@ $(document).ready(function () {
 	});
 });
 
-function performSign(signText, signReason = "Not Provided", signId = "Not Provided"){
+function performSign(signText, signReason = "Not Provided", signId = "Not Provided", thisContent = null){
 	if(typeof(signText)  === "undefined"){
 		alert("A file should be provided in 'sign-xml' property to perform sign");
 		return false;
@@ -49,14 +47,18 @@ function performSign(signText, signReason = "Not Provided", signId = "Not Provid
 			signId: signId
 		},
 		function (response) {
+			guidToThisMap.set(response.guid, thisContent);
 			var timeInterval = setInterval(function(){
 				//console.debug(response);
 				if(guidToSignedDataMap.has(response.guid)){
 					var data = guidToSignedDataMap.get(response.guid);
 					guidToSignedDataMap.delete(response.guid);
+					guidToThisMap.get(response.guid).attr("signed-xml", data.data.signXmlText);
+					guidToThisMap.delete(response.guid);
 					console.log(data);
 					clearInterval(timeInterval);
 					console.debug("Signing Done");
+					//callMe();
 					return;
 				} else{
 					var nativeResponse = getIfResponseAvailableById(response.guid);
