@@ -1,8 +1,8 @@
 //https://stackoverflow.com/questions/31201420/chrome-extension-native-messaging-synchronization
 
-//Locking implementation
-var isLocked = false;
-var lastNativeMessage = null;
+var hostName = "com.bcc.chrome.extension.native.communication";
+
+let guidToSignedDataMap = new Map();
 
 //Startup Event
 chrome.runtime.onInstalled.addListener(function() {
@@ -11,39 +11,71 @@ chrome.runtime.onInstalled.addListener(function() {
 
 // Bind event on receiving any message:
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-	if(isLocked)
-	{
-		return;
-	}
 	switch(message.eventType) {
 		case "signature":
-			isLocked = true;
-			sendNativeMessage({
+			var sentNativeMsg = {
 				"signXmlText": "OK",
 				"signReason": "sign Reason",
 				"signId": "sign Id"
+			};
+			var uniqueIdForResponse = guid();
+			guidToSignedDataMap.set(uniqueIdForResponse, null);
+			chrome.runtime.sendNativeMessage(hostName, sentNativeMsg, function(response) {
+				if (chrome.runtime.lastError) {
+					console.log("Background ERROR: " + chrome.runtime.lastError.message);
+				} else {
+					guidToSignedDataMap.set(uniqueIdForResponse, response);
+					console.log(response);
+					console.log(guidToSignedDataMap);
+				}
 			});
-			var status = ["signed", "rejected"];
-			// while(isLocked)
-			// {
-			// 	status = "nativeMessageSent";
-			// }
-			console.log(lastNativeMessage);
-			var signedText = "OK";
+
 			sendResponse({
-				message: message,
+				data: message,
 				sender: sender,
 				time : (new Date()).toUTCString() + "-" + (new Date()).getMilliseconds(),
-				status: status,
-				signedText: signedText
+				status: "processing",
+				guid: uniqueIdForResponse
 			});
 			break;
-		case "OtherString":
-			// Functionality
+		case "getSignature":
+			if(message.signId && guidToSignedDataMap.has(message.signId))
+			{
+				var data = guidToSignedDataMap.get(message.signId);
+				if(data!=null)
+				{
+					sendResponse({
+						data: guidToSignedDataMap.get(message.signId),
+						sender: sender,
+						time : (new Date()).toUTCString() + "-" + (new Date()).getMilliseconds(),
+						status: "success",
+						guid: message.signId
+					});
+					guidToSignedDataMap.delete(message.signId);
+				}
+				else
+				{
+					sendResponse({
+						time : (new Date()).toUTCString() + "-" + (new Date()).getMilliseconds(),
+						status: "processing",
+						guid: message.signId
+					});
+				}
+				
+			}
+			else
+			{
+				sendResponse({
+					time : (new Date()).toUTCString() + "-" + (new Date()).getMilliseconds(),
+					status: "processed",
+					guid: message.signId
+				});
+			}
+			
 			break;
 		default:
 			sendResponse({
-				time: (new Date()).toUTCString(),
+				time: (new Date()).toUTCString() + "-" + (new Date()).getMilliseconds(),
 				sender: sender,
 				status: "Invalid Request"
 			});
@@ -51,35 +83,9 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 	}
 });
 
-/////////////////////////////Native Message Function Defination - Start
-var hostName = "com.bcc.chrome.extension.native.communication";
-var port = null;
-
-function onNativeMessage(message){
-	//appendMessage("Received message: " + JSON.stringify(message));
-	console.log(message);
-	lastNativeMessage = message;
-	port.disconnect();
-	isLocked = false;
+function guid() {
+	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+		var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+		return v.toString(16);
+	});
 }
-
-function onDisconnected() {
-	console.warn("Faild to connect or disconnected");
-	console.error(chrome.runtime.lastError.message);
-	port = null;
-}
-
-function connectNativeMessage() {
-	if(port != null){
-		console.log("Not First Connection");
-	}
-	port = chrome.runtime.connectNative(hostName);
-	port.onMessage.addListener(onNativeMessage);
-	port.onDisconnect.addListener(onDisconnected);
-}
-
-function sendNativeMessage(message) {
-	connectNativeMessage();
-	port.postMessage(message);
-}
-/////////////////////////////Native Message Function Defination - End
