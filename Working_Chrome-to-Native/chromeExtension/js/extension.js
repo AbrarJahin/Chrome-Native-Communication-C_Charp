@@ -1,5 +1,6 @@
 // var hostName = "com.bcc.chrome.extension.native.communication";
 var isNotChromeBrowser = true;
+let guidToSignedDataMap = new Map();
 
 $(document).ready(function () {
 	if(jQuery.inArray(getUserBrowser(), ["chrome", "MS Edge Chromium"]) == -1){
@@ -48,11 +49,59 @@ function performSign(signText, signReason = "Not Provided", signId = "Not Provid
 			signId: signId
 		},
 		function (response) {
-			console.log(response);	
+			var timeInterval = setInterval(function(){
+				//console.debug(response);
+				if(guidToSignedDataMap.has(response.guid)){
+					var data = guidToSignedDataMap.get(response.guid);
+					guidToSignedDataMap.delete(response.guid);
+					console.log(data);
+					clearInterval(timeInterval);
+					console.debug("Signing Done");
+					return;
+				} else{
+					var nativeResponse = getIfResponseAvailableById(response.guid);
+					if(!nativeResponse){
+						console.log("Error in getting status");
+						console.log(nativeResponse);
+					}
+				}
+			}, 100);
+			setTimeout(() => {
+				clearInterval(timeInterval);
+				console.log("Check Cleared");
+			}, 600000);//10 min wait
 		});
 	} catch (error) {
 		console.log(error);
 		reloadExtension();
+	}
+	return true;
+}
+
+function getIfResponseAvailableById(guid){
+	try {
+		chrome.runtime.sendMessage({
+			eventType: 'getSignature',
+			signId: guid
+		},
+		function (response) {
+			switch(response.status) {
+				case "success":
+					guidToSignedDataMap.set(guid, response);
+					break;
+				case "processing":
+					console.log("Processing - " + guid + " - " + (new Date()).getMilliseconds());
+					break;
+				case "processed":
+					console.log("Already processed - " + guid + " - " + (new Date()).getMilliseconds());
+					break;
+				default:
+					console.log("All case failed for retrieve signature - " + guid);
+			}
+		});
+	} catch (error) {
+		console.log(error);
+		return false;
 	}
 	return true;
 }
