@@ -1,37 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Demo Sign HTML</title>
+	</head>
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
-	<script type="text/javascript">
-		function callMe(param=null) {
-			if(param==null)
-			{
-				alert("No param added");
-				console.log("No param added");
-			} else{
-				alert(param);
-				console.log(param);
-			}
-		}
-	</script>
-</head>
+	<body>
+		https://stackoverflow.com/a/41425087/2193439
+		<br/>
+		<br/>
+		<br/>
+		<a class="btn-digital-sign" id="button" href="#?google.com"
+			sign-xml="test"
+			sign-reason="Anything"
+			sign-server-id="123">
+			click to sign
+		</a>
 
-<body>
-	https://stackoverflow.com/a/41425087/2193439
-	<a class="btn-digital-sign" id="button" href="#?google.com"
-		sign-xml="test"
-		sign-reason="Anything"
-		sign-server-id="123">
-		click to sign
-	</a>
-
-	<br/><br/><br/><br/>
-	<a class="btn-connect" id="checkButton" href="#?google.com">
-		click to connect
-	</a>
-</body>
-
+		<script type="text/javascript">
+			setInterval(function() {
+				for (let item of document.getElementsByClassName("btn-digital-sign")) {
+					if(item.getAttribute('signed-xml')) {
+						var signatureText = item.getAttribute('signed-xml');
+						item.removeAttribute('signed-xml');
+						var signatureId = item.getAttribute('sign-server-id');
+						//Do your ajax file upload here
+						console.log(signatureText, "-", new Date());
+						//Ajax server signed file upload done - show done message
+					}
+				}
+			}, 500);
+		</script>
+	</body>
 </html>

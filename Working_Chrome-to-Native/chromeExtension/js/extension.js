@@ -11,10 +11,6 @@ $(document).ready(function () {
 		fixChromeBackCompatblity();
 	}
 
-	$(".btn-connect").on("click",function(){
-		alert("Clicked Connect Button");
-	});
-
 	$(".btn-digital-sign").on("click",function(){
 		var signText = $(this).attr('sign-xml');
 		var signReason = $(this).attr('sign-reason');
@@ -25,7 +21,7 @@ $(document).ready(function () {
 		}
 		else
 		{
-			console.log("File signing done");
+			//console.log("File signing done");
 		}
 	});
 });
@@ -54,11 +50,11 @@ function performSign(signText, signReason = "Not Provided", signId = "Not Provid
 					var data = guidToSignedDataMap.get(response.guid);
 					guidToSignedDataMap.delete(response.guid);
 					guidToThisMap.get(response.guid).attr("signed-xml", data.data.signXmlText);
+					guidToThisMap.get(response.guid).trigger("DOMAttrModified");
 					guidToThisMap.delete(response.guid);
-					console.log(data);
+					//console.log(data);
 					clearInterval(timeInterval);
-					console.debug("Signing Done");
-					//callMe();
+					//console.debug("Signing Done");
 					return;
 				} else{
 					var nativeResponse = getIfResponseAvailableById(response.guid);
@@ -70,7 +66,7 @@ function performSign(signText, signReason = "Not Provided", signId = "Not Provid
 			}, 100);
 			setTimeout(() => {
 				clearInterval(timeInterval);
-				console.log("Check Cleared");
+				//console.log("Check Cleared");
 			}, 600000);//10 min wait
 		});
 	} catch (error) {
@@ -92,13 +88,13 @@ function getIfResponseAvailableById(guid){
 					guidToSignedDataMap.set(guid, response);
 					break;
 				case "processing":
-					console.log("Processing - " + guid + " - " + (new Date()).getMilliseconds());
+					//console.log("Processing - " + guid + " - " + (new Date()).getMilliseconds());
 					break;
 				case "processed":
-					console.log("Already processed - " + guid + " - " + (new Date()).getMilliseconds());
+					//console.log("Already processed - " + guid + " - " + (new Date()).getMilliseconds());
 					break;
 				default:
-					console.log("All case failed for retrieve signature - " + guid);
+					//console.log("All case failed for retrieve signature - " + guid);
 			}
 		});
 	} catch (error) {
@@ -145,7 +141,7 @@ function reloadExtension() {
 	try {
 		chrome.runtime.reload();
 	} catch (error) {
-		console.log("kios mode enabled");
+		//console.log("kios mode enabled");
 		chrome.runtime.restart();
 	}
 }
