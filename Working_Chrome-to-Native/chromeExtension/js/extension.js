@@ -2,6 +2,7 @@
 var isNotChromeBrowser = true;
 let guidToSignedDataMap = new Map();
 let guidToThisMap = new Map();
+const thisDataSet = new Set();
 
 $(document).ready(function () {
 	if(jQuery.inArray(getUserBrowser(), ["chrome", "MS Edge Chromium"]) == -1){
@@ -34,6 +35,11 @@ function performSign(signText, signReason = "Not Provided", signId = "Not Provid
 		alert("Only Chrome or Edge Browser is supported!");
 		return false;
 	}
+	if(thisDataSet.has(thisContent)){
+		return false;
+	} else{
+		thisDataSet.add(thisContent);
+	}
 	//Perform sign with Chrome Native Messaging - send data to background script
 	try {
 		chrome.runtime.sendMessage({
@@ -57,7 +63,7 @@ function performSign(signText, signReason = "Not Provided", signId = "Not Provid
 					//console.debug("Signing Done");
 					return;
 				} else{
-					var nativeResponse = getIfResponseAvailableById(response.guid);
+					var nativeResponse = getIfResponseAvailableById(response.guid, thisContent);
 					if(!nativeResponse){
 						console.log("Error in getting status");
 						console.log(nativeResponse);
@@ -76,7 +82,7 @@ function performSign(signText, signReason = "Not Provided", signId = "Not Provid
 	return true;
 }
 
-function getIfResponseAvailableById(guid){
+function getIfResponseAvailableById(guid, thisContent = null){
 	try {
 		chrome.runtime.sendMessage({
 			eventType: 'getSignature',
@@ -86,6 +92,7 @@ function getIfResponseAvailableById(guid){
 			switch(response.status) {
 				case "success":
 					guidToSignedDataMap.set(guid, response);
+					thisDataSet.delete(thisContent);
 					break;
 				case "processing":
 					//console.log("Processing - " + guid + " - " + (new Date()).getMilliseconds());
@@ -94,6 +101,7 @@ function getIfResponseAvailableById(guid){
 					//console.log("Already processed - " + guid + " - " + (new Date()).getMilliseconds());
 					break;
 				default:
+					//thisDataSet.delete(thisContent);
 					//console.log("All case failed for retrieve signature - " + guid);
 			}
 		});

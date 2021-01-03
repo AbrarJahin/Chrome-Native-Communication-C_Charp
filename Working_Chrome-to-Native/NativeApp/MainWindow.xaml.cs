@@ -46,11 +46,6 @@ namespace ExampleApp
             Application.Current.Shutdown();
         }
 
-        //private string ReverseString(string request)
-        //{
-        //    return new string(request.ToCharArray().Reverse().ToArray());
-        //}
-
         private async Task<Message> ComputeResponseAsync(Message receivedMessage)
         {
             await Task.Delay(10);

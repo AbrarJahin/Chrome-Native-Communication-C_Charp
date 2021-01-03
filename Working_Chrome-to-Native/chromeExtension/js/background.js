@@ -14,9 +14,9 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 	switch(message.eventType) {
 		case "signature":
 			var sentNativeMsg = {
-				"signXmlText": "OK",
-				"signReason": "sign Reason",
-				"signId": "sign Id"
+				"signXmlText": message.signText,
+				"signReason": message.signReason,
+				"signId": message.signId
 			};
 			var uniqueIdForResponse = guid();
 			guidToSignedDataMap.set(uniqueIdForResponse, null);
