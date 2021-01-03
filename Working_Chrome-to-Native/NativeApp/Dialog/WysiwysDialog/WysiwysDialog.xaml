@@ -1,0 +1,123 @@
+﻿<Window x:Class="XMLSigner.Dialog.WysiwysDialog.WysiwysDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:XMLSigner.Dialog.WysiwysDialog"
+        mc:Ignorable="d"
+        Title="Please Check The File Before Sign"
+        WindowStartupLocation="CenterScreen"
+        ContentRendered="Window_ContentRendered"
+        Loaded="OnLoaded"
+        WindowStyle="ToolWindow"
+        ResizeMode="NoResize"
+        Height="472" Width="800">
+
+    <Window.Resources>
+        <HierarchicalDataTemplate x:Key="NodeTemplate">
+            <TextBlock x:Name="text"
+                       Text="?" />
+            <HierarchicalDataTemplate.ItemsSource>
+                <Binding XPath="child::node()" />
+            </HierarchicalDataTemplate.ItemsSource>
+            <HierarchicalDataTemplate.Triggers>
+                <DataTrigger Binding="{Binding Path=NodeType}"
+                             Value="Text">
+                    <Setter TargetName="text"
+                            Property="Text"
+                            Value="{Binding Path=Value}"></Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=NodeType}"
+                             Value="Element">
+                    <Setter TargetName="text"
+                            Property="Text"
+                            Value="{Binding Path=Name}"></Setter>
+                </DataTrigger>
+            </HierarchicalDataTemplate.Triggers>
+        </HierarchicalDataTemplate>
+        <XmlDataProvider x:Key="xmlDataProvider"></XmlDataProvider>
+    </Window.Resources>
+
+    <Grid>
+        <Label Content="Real Document" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <TreeView
+            MinHeight="100"
+            MinWidth="100"
+            Margin="0,26,400,53"
+            Name="realDocumentTreeView"
+            Background="AliceBlue"
+            ItemsSource="{Binding Source={StaticResource xmlDataProvider}, XPath=*}"
+            ItemTemplate="{StaticResource NodeTemplate}"
+            >
+        </TreeView>
+
+        <Label Content="Existing Signatures" HorizontalAlignment="Right" VerticalAlignment="Top" />
+
+        <ListView
+            Name="Signature"
+            MinHeight="100"
+            MinWidth="100"
+            VerticalAlignment="Top"
+            Height="355"
+            Margin="405,26,0,0" >
+            <ListView.ItemContainerStyle>
+                <Style>
+                    <Setter Property="Control.Background" Value="White" />
+                    <Setter Property="Control.BorderThickness" Value="0.3" />
+                    <Setter Property="Control.BorderBrush" Value="Black" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid ShowGridLines="False" Background="AntiqueWhite">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="Name : " Grid.Row="0" Grid.Column="0" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Right"></TextBlock>
+                        <TextBlock Text="{Binding IssuedTo}" Grid.Row="0" Grid.Column="1" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
+
+                        <TextBlock Text="Issuer : " Grid.Row="1" Grid.Column="0" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Right"></TextBlock>
+                        <TextBlock Text="{Binding IssuedBy}" Grid.Row="1" Grid.Column="1" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
+
+                        <TextBlock Text="Signing Time : " Grid.Row="2" Grid.Column="0" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Right"></TextBlock>
+                        <TextBlock Text="{Binding SigningTime, StringFormat='dddd, dd MMMM yyyy hh:mm:ss ttK'}" Grid.Row="2" Grid.Column="1" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
+
+                        <TextBlock Text="Validity : " Grid.Row="3" Grid.Column="0" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Right"></TextBlock>
+                        <TextBlock Text="{Binding Validity}" Grid.Row="3" Grid.Column="1" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
+
+                        <TextBlock Text="Serial Number : " Grid.Row="4" Grid.Column="0" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Right"></TextBlock>
+                        <TextBlock Text="{Binding SerialNumber}" Grid.Row="4" Grid.Column="1" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
+
+                        <TextBlock Text="Valid From : " Grid.Row="5" Grid.Column="0" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Right"></TextBlock>
+                        <TextBlock Text="{Binding ValidFrom, StringFormat='dddd, dd MMMM yyyy hh:mm:ss ttK'}" Grid.Row="5" Grid.Column="1" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
+
+                        <TextBlock Text="Valid To : " Grid.Row="6" Grid.Column="0" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Right"></TextBlock>
+                        <TextBlock Text="{Binding ValidTo, StringFormat='dddd, dd MMMM yyyy hh:mm:ss ttK'}" Grid.Row="6" Grid.Column="1" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
+
+                        <TextBlock Text="Issuer : " Grid.Row="7" Grid.Column="0" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Right"></TextBlock>
+                        <TextBlock Text="{Binding Issuer}" Grid.Row="7" Grid.Column="1" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
+
+                        <TextBlock Text="Subject : " Grid.Row="8" Grid.Column="0" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Right"></TextBlock>
+                        <TextBlock Text="{Binding Subject}" Grid.Row="8" Grid.Column="1" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Button IsDefault="True" Name="btnDialogOk" Click="btnDialogOk_Click" Content="Sign and Upload" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="38" Width="309" Margin="10,0,0,10"/>
+        <Button IsCancel="True" Content="Don't Sign" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="38" Width="309" Margin="0,0,10,10"/>
+    </Grid>
+</Window>

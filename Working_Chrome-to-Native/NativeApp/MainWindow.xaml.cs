@@ -3,8 +3,11 @@ using io.github.ba32107.Chrome.NativeMessaging;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Xml;
+using XMLSigner.Library;
 
 namespace ExampleApp
 {
@@ -49,8 +52,32 @@ namespace ExampleApp
         private async Task<Message> ComputeResponseAsync(Message receivedMessage)
         {
             await Task.Delay(10);
-            receivedMessage.XmlText = new string(receivedMessage.XmlText.ToCharArray().Reverse().ToArray());
-            return receivedMessage;
+
+            try
+            {
+                XmlDocument xmlDoc = new XmlDocument();
+                //xmlDoc.PreserveWhitespace = false;/////////////////////////////////Should do it in both sign and verify
+                xmlDoc.Load(receivedMessage.XmlText);
+
+                X509Certificate2 cert = XmlSign.GetX509Certificate2FromDongle();   //Load Certificate
+                XmlDocument signedDoc = XmlSign.GetSignedXMLDocument(xmlDoc, cert);
+                if (signedDoc != null)
+                {
+                    receivedMessage.XmlText = signedDoc.OuterXml;
+                    return receivedMessage;
+                }
+                else
+                {
+                    receivedMessage.XmlText = "";
+                    MessageBox.Show("File Tempered After Last Sign");
+                    return receivedMessage;
+                }
+            }
+            catch(Exception ex)
+            {
+                receivedMessage.XmlText = ex.Message.ToString();
+                return receivedMessage;
+            }
         }
     }
 }
