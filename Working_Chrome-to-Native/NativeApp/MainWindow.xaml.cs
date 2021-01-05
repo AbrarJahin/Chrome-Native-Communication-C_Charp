@@ -57,7 +57,7 @@ namespace ExampleApp
             {
                 XmlDocument xmlDoc = new XmlDocument();
                 //xmlDoc.PreserveWhitespace = false;/////////////////////////////////Should do it in both sign and verify
-                xmlDoc.Load(receivedMessage.XmlText);
+                xmlDoc.LoadXml(receivedMessage.XmlText);
 
                 X509Certificate2 cert = XmlSign.GetX509Certificate2FromDongle();   //Load Certificate
                 XmlDocument signedDoc = XmlSign.GetSignedXMLDocument(xmlDoc, cert);
